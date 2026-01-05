@@ -1,10 +1,8 @@
-%% Cleaned & Structured MATLAB Script for Drying Process
-% Author: University Assignment
 % Purpose: Mass and energy balance of KCl drying with fluidized bed
 
 clear; clc; close all;
 
-%% ---------------- Parameters ----------------
+%% Parameters
 % Dryer & Material
 G_k = 12;             % ton/h, final product flowrate
 mu_k = 0.004;         % final moisture content in KCl
@@ -32,14 +30,14 @@ T0 = 273.15;
 eta0 = [1.375;0.861;1.166;1.652]*1e-5;
 C = [254;650;125;104];
 
-%% ---------------- Mass Balance ----------------
+%%Mass Balance
 G_p = G_k*(1-mu_k)/(1-mu_p)*1000/3600;  % kg/s, raw material + moisture
 G_k = G_k*1000/3600;                     % kg/s, product
 W = G_p - G_k;                           % kg/s, removed water
 W_total = G_p*mu_p;                       % total initial water
 W_remain = G_k*mu_k;                      % remaining water
 
-%% ---------------- Energy Balance ----------------
+%% Energy Balance 
 % Heat capacity functions
 fun_KCl = @(t) 35.42 + 70.03*t - 91.3823*t.^2 + 52.52*t.^3 + 0.1534./t.^2; 
 DelH_KCl = integral(fun_KCl, 0.29115, 0.41315);
@@ -62,7 +60,7 @@ q_loss = q_loss_percent*(q_H2O_total + q_KCl);
 q_gas_total = q_H2O_total + q_KCl + q_loss;  % kJ/s
 q_per_kg_water = q_gas_total / W;            % kJ/kg water
 
-%% ---------------- Gas Properties ----------------
+%%  Gas Properties
 t_mean = (t_1 + t_2)/2; % mean gas temperature
 
 % Heat capacities at 300 and 400 C for interpolation
@@ -116,7 +114,7 @@ M_o_z = sum(M_i.*g_o_i);
 rho_o = M_o_z*p/(R*(t_2+T0)*1000);
 w_rz = G_o/(rho_o*F_ds);
 
-% Adjust separator area to avoid entrainment
+% Adjust separator area to avoid entrainment of smallest particles
 F_sep = F_ds;
 while w_rz > w
     F_sep = 1.05*F_sep;
@@ -153,3 +151,4 @@ fprintf('Heat per kg water q = %.2f kJ/kg\n', q_per_kg_water);
 fprintf('Gas flowrate G_s = %.4f kg/s\n', G_s);
 fprintf('Distributor diameter D_ds = %.4f m\n', D_ds);
 fprintf('Separator diameter D_wylot = %.4f m\n', D_wylot);
+
